@@ -10,7 +10,6 @@
 		7104498D1F30D0BF0073FD09 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7104498C1F30D0BF0073FD09 /* AppDelegate.m */; };
 		7104498F1F30D0BF0073FD09 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 7104498E1F30D0BF0073FD09 /* art.scnassets */; };
 		710449921F30D0BF0073FD09 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 710449911F30D0BF0073FD09 /* ViewController.m */; };
-		710449951F30D0BF0073FD09 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710449931F30D0BF0073FD09 /* Main.storyboard */; };
 		710449971F30D0BF0073FD09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 710449961F30D0BF0073FD09 /* Assets.xcassets */; };
 		7104499A1F30D0C00073FD09 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710449981F30D0C00073FD09 /* LaunchScreen.storyboard */; };
 		7104499D1F30D0C00073FD09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7104499C1F30D0C00073FD09 /* main.m */; };
@@ -42,7 +41,6 @@
 		7104498E1F30D0BF0073FD09 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		710449901F30D0BF0073FD09 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		710449911F30D0BF0073FD09 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		710449941F30D0BF0073FD09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		710449961F30D0BF0073FD09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		710449991F30D0C00073FD09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7104499B1F30D0C00073FD09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -108,7 +106,6 @@
 				7104498E1F30D0BF0073FD09 /* art.scnassets */,
 				710449901F30D0BF0073FD09 /* ViewController.h */,
 				710449911F30D0BF0073FD09 /* ViewController.m */,
-				710449931F30D0BF0073FD09 /* Main.storyboard */,
 				710449961F30D0BF0073FD09 /* Assets.xcassets */,
 				710449981F30D0C00073FD09 /* LaunchScreen.storyboard */,
 				7104499B1F30D0C00073FD09 /* Info.plist */,
@@ -241,7 +238,6 @@
 				7104498F1F30D0BF0073FD09 /* art.scnassets in Resources */,
 				7104499A1F30D0C00073FD09 /* LaunchScreen.storyboard in Resources */,
 				710449971F30D0BF0073FD09 /* Assets.xcassets in Resources */,
-				710449951F30D0BF0073FD09 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,14 +300,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		710449931F30D0BF0073FD09 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				710449941F30D0BF0073FD09 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		710449981F30D0C00073FD09 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -430,7 +418,7 @@
 				DEVELOPMENT_TEAM = V5QYPYR594;
 				INFOPLIST_FILE = ARTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = RenhuaChi.ARTest;
+				PRODUCT_BUNDLE_IDENTIFIER = RenhuaChi.ARTest.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -443,7 +431,7 @@
 				DEVELOPMENT_TEAM = V5QYPYR594;
 				INFOPLIST_FILE = ARTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = RenhuaChi.ARTest;
+				PRODUCT_BUNDLE_IDENTIFIER = RenhuaChi.ARTest.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

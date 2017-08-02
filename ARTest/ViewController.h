@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <SceneKit/SceneKit.h>
+#import <SpriteKit/SpriteKit.h>
 #import <ARKit/ARKit.h>
 
 @interface ViewController : UIViewController
