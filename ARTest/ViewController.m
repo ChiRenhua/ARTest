@@ -42,7 +42,7 @@
 
 - (void)initNode {
     self.testNode = [[SCNNode alloc] init];
-    self.testNode.geometry = [SCNPlane planeWithWidth:1 height:0.5];
+    self.testNode.geometry = [SCNBox boxWithWidth:1 height:0.5 length:1 chamferRadius:0];
     [self.testNode setPosition:SCNVector3Make(0, 0, 0)];
     
     [self.arSCNView.scene.rootNode addChildNode:self.testNode];
@@ -58,8 +58,34 @@
     [skScene addChild:videoNode];
     skScene.size = videoNode.size;
     
+//    self.testNode.geometry.firstMaterial.diffuse.contents = skScene;
+    SCNMaterial *greenMaterial              = [SCNMaterial material];
+    greenMaterial.diffuse.contents          = skScene;
+    greenMaterial.locksAmbientWithDiffuse   = YES;
     
-    self.testNode.geometry.firstMaterial.diffuse.contents = skScene;
+//    SCNMaterial *redMaterial                = [SCNMaterial material];
+//    redMaterial.diffuse.contents            = [UIColor redColor];
+//    redMaterial.locksAmbientWithDiffuse     = YES;
+    
+    SCNMaterial *blueMaterial               = [SCNMaterial material];
+    blueMaterial.diffuse.contents           = [UIColor blueColor];
+    blueMaterial.locksAmbientWithDiffuse    = YES;
+    
+//    SCNMaterial *yellowMaterial             = [SCNMaterial material];
+//    yellowMaterial.diffuse.contents         = [UIColor yellowColor];
+//    yellowMaterial.locksAmbientWithDiffuse  = YES;
+//
+//    SCNMaterial *purpleMaterial             = [SCNMaterial material];
+//    purpleMaterial.diffuse.contents         = [UIColor purpleColor];
+//    purpleMaterial.locksAmbientWithDiffuse  = YES;
+//
+//    SCNMaterial *magentaMaterial            = [SCNMaterial material];
+//    magentaMaterial.diffuse.contents        = [UIColor magentaColor];
+//    magentaMaterial.locksAmbientWithDiffuse = YES;
+    self.testNode.geometry.materials = @[greenMaterial,  greenMaterial,    greenMaterial,
+                                         greenMaterial, blueMaterial, blueMaterial];
+    
+    
     [videoNode play];
     
 }
