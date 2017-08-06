@@ -24,6 +24,8 @@
 
 @property (nonatomic, strong) NSMutableArray *playerBtnArray;
 
+@property (nonatomic, assign) BOOL isPlaying;
+
 @end
 
 @implementation ViewController
@@ -84,30 +86,39 @@
     playerMaterial.diffuse.contents = skScene;
     playerMaterial.locksAmbientWithDiffuse = YES;
     
+    self.isPlaying = NO;
+    
     return playerMaterial;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint loaction = [touch locationInView:self.arSCNView];
-    NSLog(@"loaction---x: %f-----y: %f", loaction.x, loaction.y);
     NSArray *hitTestArray = [self.arSCNView hitTest:loaction options:nil];
     
     if (hitTestArray.count > 0) {
         [self.playerBtnArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             SKScene *skScene = (SKScene *)obj;
-            
             SKNode *node = [skScene nodeAtPoint:loaction];
             
-            NSLog(@"lalalala: %@", node.class);
-            
-            if ([node isKindOfClass:[SKSpriteNode class]]) {
-                
-            }
-            
-            NSLog(@"sksceneloaction---x: %f-----y: %f", skScene.position.x, skScene.position.y);
-            if ([skScene containsPoint:loaction]) {
-                
+            if ([node isKindOfClass:[SKScene class]]) {
+                SKScene *targetScene = (SKScene *)node;
+                [targetScene.children enumerateObjectsUsingBlock:^(SKNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj isKindOfClass:[SKVideoNode class]]) {
+                        SKVideoNode *videoNode = (SKVideoNode *)obj;
+                        
+                        if (self.isPlaying) {
+                            [videoNode pause];
+                            self.isPlaying = NO;
+                        }else {
+                            [videoNode play];
+                            self.isPlaying = YES;
+                        }
+                    }else {
+                        obj.alpha = !obj.alpha;
+                    }
+                    
+                }];
             }
         }];
     }
