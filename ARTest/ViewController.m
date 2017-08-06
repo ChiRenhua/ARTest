@@ -11,87 +11,109 @@
 @interface ViewController () <ARSCNViewDelegate, ARSessionDelegate>
 
 //AR视图：展示3D界面
-@property (nonatomic, strong)ARSCNView *arSCNView;
+@property (nonatomic, strong) ARSCNView *arSCNView;
 
 //AR会话，负责管理相机追踪配置及3D相机坐标
-@property(nonatomic,strong)ARSession *arSession;
+@property (nonatomic, strong) ARSession *arSession;
 
 //会话追踪配置
-@property(nonatomic,strong)ARSessionConfiguration *arSessionConfiguration;
+@property (nonatomic, strong) ARSessionConfiguration *arSessionConfiguration;
 
 //Node对象
-@property(nonatomic, strong) SCNNode *testNode;
+@property (nonatomic, strong) SCNNode *testNode;
+
+@property (nonatomic, strong) NSMutableArray *playerBtnArray;
 
 @end
 
-    
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
     
-    [self.view addSubview:self.arSCNView];
+    self.playerBtnArray = [[NSMutableArray alloc] init];
+    
     self.arSCNView.delegate = self;
-    
     [self.arSession runWithConfiguration:self.arSessionConfiguration];
+    [self.view addSubview:self.arSCNView];
 }
 
 - (void)initNode {
     self.testNode = [[SCNNode alloc] init];
     self.testNode.geometry = [SCNBox boxWithWidth:1 height:0.5 length:1 chamferRadius:0];
-    [self.testNode setPosition:SCNVector3Make(0, 0, 0)];
+    [self.testNode setPosition:SCNVector3Make(0, 0, -3)];
     
     [self.arSCNView.scene.rootNode addChildNode:self.testNode];
     
-    NSString *videoPath=[[NSBundle mainBundle] pathForResource:@"art.scnassets/video" ofType:@"mp4"];
-    NSURL *videoURL=[NSURL fileURLWithPath:videoPath];
+    NSURL *videoURL1 = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"art.scnassets/video1" ofType:@"mp4"]];
+    NSURL *videoURL2 = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"art.scnassets/video2" ofType:@"mp4"]];
+    NSURL *videoURL3 = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"art.scnassets/video3" ofType:@"mp4"]];
+    NSURL *videoURL4 = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"art.scnassets/video4" ofType:@"m4v"]];
     
-    SKVideoNode *videoNode = [SKVideoNode videoNodeWithURL:videoURL];
+    self.testNode.geometry.materials = @[[self playerMaterialWithPlayAddress:videoURL1],
+                                         [self playerMaterialWithPlayAddress:videoURL2],
+                                         [self playerMaterialWithPlayAddress:videoURL3],
+                                         [self playerMaterialWithPlayAddress:videoURL4],
+                                         [self playerMaterialWithPlayAddress:videoURL4],
+                                         [self playerMaterialWithPlayAddress:videoURL4],];
+}
+
+- (SCNMaterial *)playerMaterialWithPlayAddress:(NSURL *)url {
+    SKVideoNode *videoNode = [SKVideoNode videoNodeWithURL:url];
     videoNode.size = CGSizeMake(500, 250);
     videoNode.position = CGPointMake(videoNode.size.width/2, videoNode.size.height/2);
     videoNode.zRotation = M_PI;
+    
+    SKSpriteNode *playerBtnNode = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
+    playerBtnNode.size = CGSizeMake(100, 100);
+    playerBtnNode.position = CGPointMake(videoNode.size.width/2, videoNode.size.height/2);
+    
+    SKSpriteNode *pauseBtnNode = [[SKSpriteNode alloc] initWithImageNamed:@"pause"];
+    pauseBtnNode.size = CGSizeMake(100, 100);
+    pauseBtnNode.position = CGPointMake(videoNode.size.width/2, videoNode.size.height/2);
+    pauseBtnNode.alpha = 0;
+    
     SKScene *skScene = [SKScene new];
     [skScene addChild:videoNode];
+    [skScene addChild:playerBtnNode];
     skScene.size = videoNode.size;
     
-//    self.testNode.geometry.firstMaterial.diffuse.contents = skScene;
-    SCNMaterial *greenMaterial              = [SCNMaterial material];
-    greenMaterial.diffuse.contents          = skScene;
-    greenMaterial.locksAmbientWithDiffuse   = YES;
+    [self.playerBtnArray addObject:skScene];
     
-//    SCNMaterial *redMaterial                = [SCNMaterial material];
-//    redMaterial.diffuse.contents            = [UIColor redColor];
-//    redMaterial.locksAmbientWithDiffuse     = YES;
+    SCNMaterial *playerMaterial = [SCNMaterial material];
+    playerMaterial.diffuse.contents = skScene;
+    playerMaterial.locksAmbientWithDiffuse = YES;
     
-    SCNMaterial *blueMaterial               = [SCNMaterial material];
-    blueMaterial.diffuse.contents           = [UIColor blueColor];
-    blueMaterial.locksAmbientWithDiffuse    = YES;
-    
-//    SCNMaterial *yellowMaterial             = [SCNMaterial material];
-//    yellowMaterial.diffuse.contents         = [UIColor yellowColor];
-//    yellowMaterial.locksAmbientWithDiffuse  = YES;
-//
-//    SCNMaterial *purpleMaterial             = [SCNMaterial material];
-//    purpleMaterial.diffuse.contents         = [UIColor purpleColor];
-//    purpleMaterial.locksAmbientWithDiffuse  = YES;
-//
-//    SCNMaterial *magentaMaterial            = [SCNMaterial material];
-//    magentaMaterial.diffuse.contents        = [UIColor magentaColor];
-//    magentaMaterial.locksAmbientWithDiffuse = YES;
-    self.testNode.geometry.materials = @[greenMaterial,  greenMaterial,    greenMaterial,
-                                         greenMaterial, blueMaterial, blueMaterial];
-    
-    
-    [videoNode play];
-    
+    return playerMaterial;
 }
 
-- (ARSessionConfiguration *)arSessionConfiguration
-{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [touches anyObject];
+    CGPoint loaction = [touch locationInView:self.arSCNView];
+    NSLog(@"loaction---x: %f-----y: %f", loaction.x, loaction.y);
+    NSArray *hitTestArray = [self.arSCNView hitTest:loaction options:nil];
+    
+    if (hitTestArray.count > 0) {
+        [self.playerBtnArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            SKScene *skScene = (SKScene *)obj;
+            
+            SKNode *node = [skScene nodeAtPoint:loaction];
+            
+            NSLog(@"lalalala: %@", node.class);
+            
+            if ([node isKindOfClass:[SKSpriteNode class]]) {
+                
+            }
+            
+            NSLog(@"sksceneloaction---x: %f-----y: %f", skScene.position.x, skScene.position.y);
+            if ([skScene containsPoint:loaction]) {
+                
+            }
+        }];
+    }
+}
+
+- (ARSessionConfiguration *)arSessionConfiguration {
     if (_arSessionConfiguration != nil) {
         return _arSessionConfiguration;
     }
@@ -106,8 +128,7 @@
     return _arSessionConfiguration;
 }
 
-- (ARSession *)arSession
-{
+- (ARSession *)arSession {
     if(_arSession != nil)
     {
         return _arSession;
@@ -117,8 +138,7 @@
     return _arSession;
 }
 
-- (ARSCNView *)arSCNView
-{
+- (ARSCNView *)arSCNView {
     if (_arSCNView != nil) {
         return _arSCNView;
     }
@@ -135,12 +155,9 @@
 
 #pragma mark -ARSessionDelegate
 //会话位置更新
-- (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame
-{
-    //监听手机的移动，实现近距离查看太阳系细节，为了凸显效果变化值*3
-    [self.testNode setPosition:SCNVector3Make(-3 * frame.camera.transform.columns[3].x, -0.1 - 3 * frame.camera.transform.columns[3].y, -2 - 3 * frame.camera.transform.columns[3].z)];
+- (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame {
+    [self.testNode setPosition:SCNVector3Make(-5 * frame.camera.transform.columns[3].x, -5 * frame.camera.transform.columns[3].y, -3 -5 * frame.camera.transform.columns[3].z)];
 }
-
 
 @end
 
