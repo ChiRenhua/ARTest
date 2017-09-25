@@ -1,14 +1,14 @@
 //
-//  ViewController.m
+//  ARPlayerViewController.m
 //  ARTest
 //
 //  Created by 迟人华 on 2017/8/1.
 //  Copyright © 2017年 迟人华. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "ARPlayerViewController.h"
 
-@interface ViewController () <ARSCNViewDelegate, ARSessionDelegate>
+@interface ARPlayerViewController () <ARSCNViewDelegate, ARSessionDelegate>
 
 //AR视图：展示3D界面
 @property (nonatomic, strong) ARSCNView *arSCNView;
@@ -17,7 +17,7 @@
 @property (nonatomic, strong) ARSession *arSession;
 
 //会话追踪配置
-@property (nonatomic, strong) ARSessionConfiguration *arSessionConfiguration;
+@property (nonatomic, strong) ARConfiguration *arSessionConfiguration;
 
 //Node对象
 @property (nonatomic, strong) SCNNode *testNode;
@@ -28,9 +28,9 @@
 
 @end
 
-@implementation ViewController
+@implementation ARPlayerViewController
 
-- (void)viewDidLoad {
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidLoad];
     
     self.playerBtnArray = [[NSMutableArray alloc] init];
@@ -40,10 +40,24 @@
     [self.view addSubview:self.arSCNView];
 }
 
+- (void)viewDidLoad {
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+}
+
+- (void)dealloc {
+    self.testNode = nil;
+    self.playerBtnArray = nil;
+    
+}
+
 - (void)initNode {
     self.testNode = [[SCNNode alloc] init];
     self.testNode.geometry = [SCNBox boxWithWidth:1 height:0.5 length:1 chamferRadius:0];
-    [self.testNode setPosition:SCNVector3Make(0, 0, -3)];
+    [self.testNode setPosition:SCNVector3Make(0, 0, - 2)];
     
     [self.arSCNView.scene.rootNode addChildNode:self.testNode];
     
@@ -124,13 +138,13 @@
     }
 }
 
-- (ARSessionConfiguration *)arSessionConfiguration {
+- (ARConfiguration *)arSessionConfiguration {
     if (_arSessionConfiguration != nil) {
         return _arSessionConfiguration;
     }
     
     //1.创建世界追踪会话配置（使用ARWorldTrackingSessionConfiguration效果更加好），需要A9芯片支持
-    ARWorldTrackingSessionConfiguration *configuration = [[ARWorldTrackingSessionConfiguration alloc] init];
+    ARWorldTrackingConfiguration *configuration = [[ARWorldTrackingConfiguration alloc] init];
     //2.设置追踪方向（追踪平面，后面会用到）
     configuration.planeDetection = ARPlaneDetectionHorizontal;
     _arSessionConfiguration = configuration;

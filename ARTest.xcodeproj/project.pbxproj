@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		7104498D1F30D0BF0073FD09 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7104498C1F30D0BF0073FD09 /* AppDelegate.m */; };
 		7104498F1F30D0BF0073FD09 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 7104498E1F30D0BF0073FD09 /* art.scnassets */; };
-		710449921F30D0BF0073FD09 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 710449911F30D0BF0073FD09 /* ViewController.m */; };
+		710449921F30D0BF0073FD09 /* ARPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 710449911F30D0BF0073FD09 /* ARPlayerViewController.m */; };
 		710449971F30D0BF0073FD09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 710449961F30D0BF0073FD09 /* Assets.xcassets */; };
 		7104499A1F30D0C00073FD09 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710449981F30D0C00073FD09 /* LaunchScreen.storyboard */; };
 		7104499D1F30D0C00073FD09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7104499C1F30D0C00073FD09 /* main.m */; };
 		710449A71F30D0C00073FD09 /* ARTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 710449A61F30D0C00073FD09 /* ARTestTests.m */; };
 		710449B21F30D0C00073FD09 /* ARTestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 710449B11F30D0C00073FD09 /* ARTestUITests.m */; };
+		71F333541F794DA800B46BAD /* ARMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71F333531F794DA800B46BAD /* ARMainViewController.m */; };
+		71F333571F79502C00B46BAD /* ARAnimationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71F333561F79502C00B46BAD /* ARAnimationViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,8 +41,8 @@
 		7104498B1F30D0BF0073FD09 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7104498C1F30D0BF0073FD09 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7104498E1F30D0BF0073FD09 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
-		710449901F30D0BF0073FD09 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		710449911F30D0BF0073FD09 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		710449901F30D0BF0073FD09 /* ARPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARPlayerViewController.h; sourceTree = "<group>"; };
+		710449911F30D0BF0073FD09 /* ARPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARPlayerViewController.m; sourceTree = "<group>"; };
 		710449961F30D0BF0073FD09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		710449991F30D0C00073FD09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7104499B1F30D0C00073FD09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +53,10 @@
 		710449AD1F30D0C00073FD09 /* ARTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ARTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		710449B11F30D0C00073FD09 /* ARTestUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARTestUITests.m; sourceTree = "<group>"; };
 		710449B31F30D0C00073FD09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		71F333521F794DA800B46BAD /* ARMainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARMainViewController.h; sourceTree = "<group>"; };
+		71F333531F794DA800B46BAD /* ARMainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARMainViewController.m; sourceTree = "<group>"; };
+		71F333551F79502C00B46BAD /* ARAnimationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARAnimationViewController.h; sourceTree = "<group>"; };
+		71F333561F79502C00B46BAD /* ARAnimationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARAnimationViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,11 +107,12 @@
 		7104498A1F30D0BF0073FD09 /* ARTest */ = {
 			isa = PBXGroup;
 			children = (
+				71F333511F794D7900B46BAD /* Model */,
+				71F333501F794D6B00B46BAD /* View */,
+				71F3334F1F794D6400B46BAD /* Controller */,
 				7104498B1F30D0BF0073FD09 /* AppDelegate.h */,
 				7104498C1F30D0BF0073FD09 /* AppDelegate.m */,
 				7104498E1F30D0BF0073FD09 /* art.scnassets */,
-				710449901F30D0BF0073FD09 /* ViewController.h */,
-				710449911F30D0BF0073FD09 /* ViewController.m */,
 				710449961F30D0BF0073FD09 /* Assets.xcassets */,
 				710449981F30D0C00073FD09 /* LaunchScreen.storyboard */,
 				7104499B1F30D0C00073FD09 /* Info.plist */,
@@ -130,6 +137,33 @@
 				710449B31F30D0C00073FD09 /* Info.plist */,
 			);
 			path = ARTestUITests;
+			sourceTree = "<group>";
+		};
+		71F3334F1F794D6400B46BAD /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				710449901F30D0BF0073FD09 /* ARPlayerViewController.h */,
+				710449911F30D0BF0073FD09 /* ARPlayerViewController.m */,
+				71F333521F794DA800B46BAD /* ARMainViewController.h */,
+				71F333531F794DA800B46BAD /* ARMainViewController.m */,
+				71F333551F79502C00B46BAD /* ARAnimationViewController.h */,
+				71F333561F79502C00B46BAD /* ARAnimationViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		71F333501F794D6B00B46BAD /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		71F333511F794D7900B46BAD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,7 +296,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				710449921F30D0BF0073FD09 /* ViewController.m in Sources */,
+				71F333571F79502C00B46BAD /* ARAnimationViewController.m in Sources */,
+				71F333541F794DA800B46BAD /* ARMainViewController.m in Sources */,
+				710449921F30D0BF0073FD09 /* ARPlayerViewController.m in Sources */,
 				7104499D1F30D0C00073FD09 /* main.m in Sources */,
 				7104498D1F30D0BF0073FD09 /* AppDelegate.m in Sources */,
 			);
@@ -510,6 +546,7 @@
 				710449B81F30D0C00073FD09 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		710449B91F30D0C00073FD09 /* Build configuration list for PBXNativeTarget "ARTestTests" */ = {
 			isa = XCConfigurationList;
@@ -518,6 +555,7 @@
 				710449BB1F30D0C00073FD09 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		710449BC1F30D0C00073FD09 /* Build configuration list for PBXNativeTarget "ARTestUITests" */ = {
 			isa = XCConfigurationList;
@@ -526,6 +564,7 @@
 				710449BE1F30D0C00073FD09 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

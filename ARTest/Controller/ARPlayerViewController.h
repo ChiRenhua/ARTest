@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  ARPlayerViewController.h
 //  ARTest
 //
 //  Created by 迟人华 on 2017/8/1.
@@ -11,6 +11,6 @@
 #import <SpriteKit/SpriteKit.h>
 #import <ARKit/ARKit.h>
 
-@interface ViewController : UIViewController
+@interface ARPlayerViewController : UIViewController
 
 @end
