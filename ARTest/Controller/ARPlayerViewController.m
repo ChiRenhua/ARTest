@@ -31,7 +31,7 @@
 @implementation ARPlayerViewController
 
 - (void)viewDidAppear:(BOOL)animated {
-    [super viewDidLoad];
+    [super viewDidAppear:animated];
     
     self.playerBtnArray = [[NSMutableArray alloc] init];
     
@@ -41,7 +41,8 @@
 }
 
 - (void)viewDidLoad {
-    
+    [super viewDidLoad];
+    self.navigationItem.title = @"AR播放器";
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
