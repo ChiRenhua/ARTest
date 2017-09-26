@@ -12,12 +12,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <ReplayKit/ReplayKit.h>
 
-typedef NS_ENUM(NSInteger, WZRecordStatus)  {
-    WZRecordStatusIdle,
-    WZRecordStatusRecording,
-    WZRecordStatusFinish,
-};
-
 @interface ARAnimationViewController () <ARSCNViewDelegate, ARSessionDelegate, RPPreviewViewControllerDelegate>
 @property (nonatomic, strong) ARSCNView *sceneView;
 @end
