@@ -8,6 +8,7 @@
 
 #import "ARMainViewController.h"
 #import "ARPlayerViewController.h"
+#import "ARAnimationViewController.h"
 
 @interface ARMainViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -53,7 +54,8 @@
             
             break;
         case 1: {
-            
+            ARAnimationViewController *arAnimationVC = [ARAnimationViewController new];
+            [self.navigationController pushViewController:arAnimationVC animated:YES];
         }
             
             break;

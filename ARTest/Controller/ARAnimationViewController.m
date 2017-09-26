@@ -8,70 +8,103 @@
 
 #import "ARAnimationViewController.h"
 #import <SceneKit/SceneKit.h>
-#import <SpriteKit/SpriteKit.h>
 #import <ARKit/ARKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <ReplayKit/ReplayKit.h>
 
-@interface ARAnimationViewController () <ARSessionDelegate>
+typedef NS_ENUM(NSInteger, WZRecordStatus)  {
+    WZRecordStatusIdle,
+    WZRecordStatusRecording,
+    WZRecordStatusFinish,
+};
 
-@property (nonatomic, strong) ARSCNView *arSCNView;
-@property (nonatomic, strong) SCNNode *animationNode;
-@property (nonatomic, strong) ARSession *arSession;
-@property (nonatomic, strong) ARConfiguration *arSessionConfiguration;
-
+@interface ARAnimationViewController () <ARSCNViewDelegate, ARSessionDelegate, RPPreviewViewControllerDelegate>
+@property (nonatomic, strong) ARSCNView *sceneView;
 @end
+
 
 @implementation ARAnimationViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"AR动画";
+    
+    self.sceneView.delegate = self;
+    self.sceneView.showsStatistics = YES;
+    
+    SCNScene *scene = [SCNScene sceneNamed:@"art.scnassets/wolf.dae"];
+    self.sceneView.scene = scene;
+    
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/2-60, bounds.size.height - 200, 120, 100)];
+    [button setTitle:@"点击录制" forState:UIControlStateNormal];
+    [button setTitle:@"录制中" forState:UIControlStateSelected];
+    [button addTarget:self action:@selector(clicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    RPScreenRecorder *recorder = [RPScreenRecorder sharedRecorder];
+    if([recorder isAvailable]) {
+        NSLog(@"支持录制");
+    }else{
+        NSLog(@"不支持录制");
+    }
+    
+    [self.view addSubview:self.sceneView];
+    [self.sceneView addSubview:button];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.arSCNView.delegate = (id)self;
+    [super viewWillAppear:animated];
     
-    [self.arSession runWithConfiguration:self.arSessionConfiguration];
-    [self.view addSubview:self.arSCNView];
+    ARWorldTrackingConfiguration *configuration = [ARWorldTrackingConfiguration new];
+    [self.sceneView.session runWithConfiguration:configuration];
 }
 
-- (ARConfiguration *)arSessionConfiguration {
-    if (_arSessionConfiguration != nil) {
-        return _arSessionConfiguration;
-    }
-    
-    //1.创建世界追踪会话配置（使用ARWorldTrackingSessionConfiguration效果更加好），需要A9芯片支持
-    ARWorldTrackingConfiguration *configuration = [[ARWorldTrackingConfiguration alloc] init];
-    //2.设置追踪方向（追踪平面，后面会用到）
-    configuration.planeDetection = ARPlaneDetectionHorizontal;
-    _arSessionConfiguration = configuration;
-    //3.自适应灯光（相机从暗到强光快速过渡效果会平缓一些）
-    _arSessionConfiguration.lightEstimationEnabled = YES;
-    return _arSessionConfiguration;
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.sceneView.session pause];
 }
 
-- (ARSession *)arSession {
-    if(_arSession != nil)
-    {
-        return _arSession;
-    }
-    _arSession = [[ARSession alloc] init];
-    _arSession.delegate = self;
-    return _arSession;
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
 }
 
-- (ARSCNView *)arSCNView {
-    if (_arSCNView != nil) {
-        return _arSCNView;
+#pragma mark - action
+
+-(void)clicked:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    if (sender.selected) {
+        RPScreenRecorder *recorder = [RPScreenRecorder sharedRecorder];
+        recorder.microphoneEnabled = YES;
+        [recorder startRecordingWithHandler:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"start recorder error - %@",error);
+            }
+        }];
+    }else {
+        RPScreenRecorder *recorder = [RPScreenRecorder sharedRecorder];
+        [recorder stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error) {
+            
+            previewViewController.previewControllerDelegate = self;
+            [self presentViewController:previewViewController animated:NO completion:^{
+                NSLog(@"开始播放啦");
+            }];
+        }];
     }
-    _arSCNView = [[ARSCNView alloc] initWithFrame:self.view.bounds];
-    _arSCNView.session = self.arSession;
-    _arSCNView.automaticallyUpdatesLighting = YES;
-    _arSCNView.delegate = (id)self;
+}
+
+- (void)previewControllerDidFinish:(RPPreviewViewController *)previewController
+{
+    [previewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (ARSCNView *)sceneView {
+    if (_sceneView != nil) {
+        return _sceneView;
+    }
+    _sceneView = [[ARSCNView alloc] initWithFrame:self.view.bounds];
+    _sceneView.automaticallyUpdatesLighting = YES;
+    _sceneView.delegate = self;
     
-    //初始化节点
-//    [self initNode];
-    
-    return _arSCNView;
+    return _sceneView;
 }
 
 @end
