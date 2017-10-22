@@ -14,6 +14,7 @@
 
 @interface ARAnimationViewController () <ARSCNViewDelegate, ARSessionDelegate, RPPreviewViewControllerDelegate>
 @property (nonatomic, strong) ARSCNView *sceneView;
+@property (nonatomic, strong) SCNNode *characterNode;
 @end
 
 
@@ -25,7 +26,10 @@
     self.sceneView.delegate = self;
     self.sceneView.showsStatistics = YES;
     
-    SCNScene *scene = [SCNScene sceneNamed:@"art.scnassets/wolf.dae"];
+    SCNScene *scene = [SCNScene sceneNamed:@"art.scnassets/characters/explorer/explorer_skinned.dae"];
+    
+    
+    
     self.sceneView.scene = scene;
     
     CGRect bounds = [UIScreen mainScreen].bounds;
