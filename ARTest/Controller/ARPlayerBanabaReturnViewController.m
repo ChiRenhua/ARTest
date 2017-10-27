@@ -12,32 +12,53 @@
 #import <ARKit/ARKit.h>
 #import "Plane.h"
 
+#define VideoNodeKey @"VideoNode"
 @interface ARPlayerBanabaReturnViewController ()
 
-//AR视图：展示3D界面
 @property (nonatomic, strong) ARSCNView *sceneView;
-
-//Node对象
-@property (nonatomic, strong) SCNNode *videoNode;
-
 @property (nonatomic, strong) NSTimer *timer;
-
 @property (nonatomic, strong) NSArray *banabaTextArray;
-
 @property (nonatomic, strong) NSArray *banabaColorArray;
-
-@property (nonatomic, strong) SCNScene *scene;
 @property (nonatomic, strong) SCNNode *selectedNode;
 @property (nonatomic, retain) NSMutableDictionary<NSUUID *, Plane *> *planes;
-@property (nonatomic, retain) NSMutableArray<SCNNode *> *sceneNode;
+@property (nonatomic, strong) NSMutableArray *videoNodeArray;
 
 @end
 
 @implementation ARPlayerBanabaReturnViewController
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.navigationItem.title = @"AR弹幕（弹幕满世界飘）";
+    
+    [self setupScene];
+    [self addGestureRecognizer];
+}
 
-- (void)banabaMove {
-    SCNNode *TVScreenNode = [_videoNode childNodeWithName:@"Layer0_001" recursively:YES];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self startSession];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self.sceneView.session pause];
+    [self.timer invalidate];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
+- (void)dealloc {
+    
+}
+
+- (void)banabaMoveWithVideoNode:(NSTimer *)timerInfo {
+    SCNNode *videoNode = [[timerInfo userInfo] objectForKey:VideoNodeKey];
+    SCNNode *TVScreenNode = [videoNode childNodeWithName:@"Layer0_001" recursively:YES];
     [TVScreenNode addChildNode:[self banabaNodeWithText:[self banabaTextFromArray] vector3Make:SCNVector3Make(0, 0, 0)]];
     [TVScreenNode addChildNode:[self banabaNodeWithText:[self banabaTextFromArray] vector3Make:SCNVector3Make(0, 0, 0)]];
     [TVScreenNode addChildNode:[self banabaNodeWithText:[self banabaTextFromArray] vector3Make:SCNVector3Make(0, 0, 0)]];
@@ -74,9 +95,9 @@
 
 - (SCNNode *)videoNode {
     SCNScene *TVScene = [SCNScene sceneNamed:@"art.scnassets/TVmodel.dae"];
-    _videoNode = TVScene.rootNode;
+    SCNNode *videoNode = TVScene.rootNode;
     
-    SCNNode *TVScreenNode = [_videoNode childNodeWithName:@"Layer0_001" recursively:YES];
+    SCNNode *TVScreenNode = [videoNode childNodeWithName:@"Layer0_001" recursively:YES];
     
     SCNNode *playerNode = [[SCNNode alloc] init];
     playerNode.geometry = [SCNBox boxWithWidth:840 height:485 length:0.01 chamferRadius:0];
@@ -87,20 +108,9 @@
     [TVScreenNode addChildNode:playerNode];
     playerNode.position = SCNVector3Make(0, -16.5, 35);
     playerNode.rotation = SCNVector4Make(1, 0 ,0 , M_PI / 2);
-    _videoNode.scale = SCNVector3Make(0.001, 0.001, 0.001);
+    videoNode.scale = SCNVector3Make(0.001, 0.001, 0.001);
     
-    return _videoNode;
-    
-//    SCNLight *light = [SCNLight light];
-//    light.type = SCNLightTypeSpot;
-//    light.castsShadow = YES;
-//
-//    SCNNode *lightNode = [SCNNode node];
-//    lightNode.light = light;
-//    lightNode.position = SCNVector3Make(0, 10, 10);
-//
-//    SCNLookAtConstraint *lookAt = [SCNLookAtConstraint lookAtConstraintWithTarget:self.videoNode];
-//    lightNode.constraints = @[lookAt];
+    return videoNode;
 }
 
 - (SCNNode *)banabaNodeWithText:(NSString *)banabaStr vector3Make:(SCNVector3)vector3make {
@@ -139,34 +149,6 @@
     return playerMaterial;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self setupScene];
-    [self addGestureRecognizer];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    [self startSession];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    [self.sceneView.session pause];
-    [self.timer invalidate];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)dealloc {
-    self.videoNode = nil;
-}
-
 #pragma mark - Add Gesture Recognizer
 
 - (void)addGestureRecognizer {
@@ -203,6 +185,10 @@
         return;
     }
     
+    if (self.videoNodeArray.count) {
+        return;
+    }
+    
     ARHitTestResult * hitResult = [result firstObject];
     [self insertGeometry:hitResult];
 }
@@ -222,6 +208,7 @@
     SCNHitTestResult * hitResult = [result firstObject];
     if (![hitResult.node.parentNode isKindOfClass:[Plane class]]) {
         [[hitResult.node parentNode] removeFromParentNode];
+        [self.videoNodeArray removeAllObjects];
     }
 }
 
@@ -295,35 +282,36 @@
                                    hitResult.worldTransform.columns[3].y + insertionYOffset,
                                    hitResult.worldTransform.columns[3].z
                                    );
-    [self.sceneNode addObject:node];
+    [self.videoNodeArray addObject:node];
     [self.sceneView.scene.rootNode addChildNode:node];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.8 target:self selector:@selector(banabaMove) userInfo:nil repeats:YES];
+    
+    NSDictionary *dic = [NSDictionary dictionaryWithObject:node forKey:VideoNodeKey];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.8 target:self selector:@selector(banabaMoveWithVideoNode:) userInfo:dic repeats:YES];
+
 }
 
 #pragma mark - Configure SCNScene
 
 - (void)setupSceneView {
-    self.sceneView.delegate = self;
+    self.sceneView.delegate = (id)self;
     self.sceneView.autoenablesDefaultLighting = YES;
     self.sceneView.showsStatistics = YES;
 }
 
 - (void)setupScene {
     self.sceneView = [[ARSCNView alloc] initWithFrame:self.view.bounds];
-    self.sceneView.delegate = self;
+    self.sceneView.delegate = (id)self;
     self.planes = [NSMutableDictionary new];
-    self.sceneNode = [NSMutableArray new];
     self.banabaTextArray = [[NSArray alloc] initWithObjects:@"哎呦不错哦～～", @"是的呢!", @"啊哈哈哈～", @"解说胸好大哦～", @"男的略丑...", @"王者！", @"憋吵吵！", @"第一", @"牛逼！", @"作者牛逼不？！", nil];
     
     self.banabaColorArray = [[NSArray alloc] initWithObjects:[UIColor blackColor], [UIColor darkGrayColor], [UIColor lightGrayColor], [UIColor whiteColor], [UIColor grayColor], [UIColor redColor], [UIColor greenColor], [UIColor blueColor], [UIColor cyanColor], [UIColor yellowColor], [UIColor magentaColor], [UIColor orangeColor], [UIColor purpleColor], [UIColor brownColor], nil];
+    self.videoNodeArray = [NSMutableArray new];
     
     self.sceneView.showsStatistics = YES;
     self.sceneView.autoenablesDefaultLighting = YES;
-    self.sceneView.debugOptions =
-    ARSCNDebugOptionShowFeaturePoints;
+    self.sceneView.debugOptions = ARSCNDebugOptionShowFeaturePoints;
     
-    SCNScene *scene = [SCNScene new];
-    self.sceneView.scene = scene;
+    self.sceneView.scene = [SCNScene new];
     [self.view addSubview:self.sceneView];
 }
 
@@ -341,7 +329,7 @@
     for (NSUUID *planeId in self.planes) {
         [self.planes[planeId] remove];
     }
-    for (SCNNode *cube in self.sceneNode) {
+    for (SCNNode *cube in self.videoNodeArray) {
         [cube removeFromParentNode];
     }
     

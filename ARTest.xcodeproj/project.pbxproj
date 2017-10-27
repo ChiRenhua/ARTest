@@ -20,6 +20,8 @@
 		719BD3941F9066030078110C /* ARPlayerBanabaReturnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 719BD3931F9066030078110C /* ARPlayerBanabaReturnViewController.m */; };
 		71F333541F794DA800B46BAD /* ARMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71F333531F794DA800B46BAD /* ARMainViewController.m */; };
 		71F333571F79502C00B46BAD /* ARAnimationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71F333561F79502C00B46BAD /* ARAnimationViewController.m */; };
+		D79061EB1FA2DEA30002AAB0 /* ARPeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D79061EA1FA2DEA30002AAB0 /* ARPeopleViewController.m */; };
+		D79061EE1FA31C540002AAB0 /* ARCharacterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = D79061ED1FA31C540002AAB0 /* ARCharacterNode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +68,10 @@
 		71F333531F794DA800B46BAD /* ARMainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARMainViewController.m; sourceTree = "<group>"; };
 		71F333551F79502C00B46BAD /* ARAnimationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARAnimationViewController.h; sourceTree = "<group>"; };
 		71F333561F79502C00B46BAD /* ARAnimationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARAnimationViewController.m; sourceTree = "<group>"; };
+		D79061E91FA2DEA30002AAB0 /* ARPeopleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARPeopleViewController.h; sourceTree = "<group>"; };
+		D79061EA1FA2DEA30002AAB0 /* ARPeopleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARPeopleViewController.m; sourceTree = "<group>"; };
+		D79061EC1FA31C540002AAB0 /* ARCharacterNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCharacterNode.h; sourceTree = "<group>"; };
+		D79061ED1FA31C540002AAB0 /* ARCharacterNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARCharacterNode.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +167,8 @@
 				71273B091F8F103500794A0F /* ARPlayerBanabaViewController.m */,
 				719BD3921F9066030078110C /* ARPlayerBanabaReturnViewController.h */,
 				719BD3931F9066030078110C /* ARPlayerBanabaReturnViewController.m */,
+				D79061E91FA2DEA30002AAB0 /* ARPeopleViewController.h */,
+				D79061EA1FA2DEA30002AAB0 /* ARPeopleViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -170,6 +178,8 @@
 			children = (
 				719BD3901F905FF70078110C /* Plane.h */,
 				719BD38F1F905FF70078110C /* Plane.m */,
+				D79061EC1FA31C540002AAB0 /* ARCharacterNode.h */,
+				D79061ED1FA31C540002AAB0 /* ARCharacterNode.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -314,8 +324,10 @@
 				719BD3911F9060150078110C /* Plane.m in Sources */,
 				71F333571F79502C00B46BAD /* ARAnimationViewController.m in Sources */,
 				71F333541F794DA800B46BAD /* ARMainViewController.m in Sources */,
+				D79061EB1FA2DEA30002AAB0 /* ARPeopleViewController.m in Sources */,
 				719BD3941F9066030078110C /* ARPlayerBanabaReturnViewController.m in Sources */,
 				710449921F30D0BF0073FD09 /* ARPlayerViewController.m in Sources */,
+				D79061EE1FA31C540002AAB0 /* ARCharacterNode.m in Sources */,
 				7104499D1F30D0C00073FD09 /* main.m in Sources */,
 				7104498D1F30D0BF0073FD09 /* AppDelegate.m in Sources */,
 				71273B0A1F8F103500794A0F /* ARPlayerBanabaViewController.m in Sources */,

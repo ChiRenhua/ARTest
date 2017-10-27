@@ -11,6 +11,7 @@
 #import "ARAnimationViewController.h"
 #import "ARPlayerBanabaViewController.h"
 #import "ARPlayerBanabaReturnViewController.h"
+#import "ARPeopleViewController.h"
 
 @interface ARMainViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -26,7 +27,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.title = @"Demo";
     
-    self.cellArr = [[NSArray alloc] initWithObjects:@"AR播放器", @"AR动画", @"AR弹幕（视频在地上）", @"AR弹幕（弹幕满世界飘）", nil];
+    self.cellArr = [[NSArray alloc] initWithObjects:@"AR播放器", @"AR动画", @"AR弹幕（视频在地上）", @"AR弹幕（弹幕满世界飘）", @"AR人物", nil];
     
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableView.dataSource = self;
@@ -69,6 +70,11 @@
         case 3: {
             ARPlayerBanabaReturnViewController *arBanabaVC = [ARPlayerBanabaReturnViewController new];
             [self.navigationController pushViewController:arBanabaVC animated:YES];
+        }
+            break;
+        case 4: {
+            ARPeopleViewController *arPeopleVC = [ARPeopleViewController new];
+            [self.navigationController pushViewController:arPeopleVC animated:YES];
         }
             break;
         default:
