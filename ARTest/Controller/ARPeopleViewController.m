@@ -27,6 +27,7 @@
     self.navigationItem.title = @"AR人物";
     
     [self setupScene];
+    [self setupButtons];
     [self addGestureRecognizer];
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -53,6 +54,44 @@
     
     self.arSceneView.scene = [SCNScene new];
     [self.view addSubview:self.arSceneView];
+}
+
+- (void)setupButtons {
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    UIButton *moveForward = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4-60, bounds.size.height - 100, 120, 100)];
+    [moveForward setTitle:@"前进" forState:UIControlStateNormal];
+    [moveForward addTarget:self action:@selector(runForwardAction) forControlEvents:UIControlEventTouchUpInside];
+//    [moveForward addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpOutside];
+//    [moveForward addTarget:self action:@selector(runForwardAction) forControlEvents:UIControlEventTouchDown];
+    
+    UIButton *moveBack = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*3-60, bounds.size.height - 100, 120, 100)];
+    [moveBack setTitle:@"后退" forState:UIControlStateNormal];
+    [moveBack addTarget:self action:@selector(runBackAction) forControlEvents:UIControlEventTouchUpInside];
+//    [moveBack addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpOutside];
+//    [moveBack addTarget:self action:@selector(runBackAction) forControlEvents:UIControlEventTouchDown];
+    
+    UIButton *stop = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*2-60, bounds.size.height - 100, 120, 100)];
+    [stop setTitle:@"停！" forState:UIControlStateNormal];
+    [stop addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.arSceneView addSubview:moveForward];
+    [self.arSceneView addSubview:moveBack];
+    [self.arSceneView addSubview:stop];
+}
+
+- (void)runForwardAction {
+    ARCharacterNode *node = [self.characterArray firstObject];
+    [node doRunActionWithDirection:ARCharacterDirection_Forward];
+}
+
+- (void)runBackAction {
+    ARCharacterNode *node = [self.characterArray firstObject];
+    [node doRunActionWithDirection:ARCharacterDirection_Back];
+}
+
+- (void)stopRun {
+    ARCharacterNode *node = [self.characterArray firstObject];
+    [node stopRunAction];
 }
 
 #pragma mark - Add Gesture Recognizer
@@ -179,9 +218,9 @@
 
 #pragma mark - Additional Utils
 - (void)insertGeometry:(ARHitTestResult *)hitResult {
-    SCNNode *node = [[ARCharacterNode alloc] init];
-//    ARFrame *frame = self.arSceneView.session.currentFrame;
-    node.scale = SCNVector3Make(0.01, 0.01, 0.01);
+    ARCharacterNode *node = [[ARCharacterNode alloc] init];
+    [node loadData];
+    node.scale = SCNVector3Make(0.009, 0.009, 0.009);
     float insertionYOffset = 0.01;
     node.position = SCNVector3Make(
                                    hitResult.worldTransform.columns[3].x,
