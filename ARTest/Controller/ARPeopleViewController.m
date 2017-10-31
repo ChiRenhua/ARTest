@@ -16,8 +16,12 @@
 @interface ARPeopleViewController ()
 @property (nonatomic, strong) ARSCNView *arSceneView;
 @property (nonatomic, retain) NSMutableDictionary<NSUUID *, Plane *> *planes;
-@property (nonatomic, strong) SCNNode *selectedNode;
+@property (nonatomic, strong) ARCharacterNode *selectedNode;
 @property (nonatomic, strong) NSMutableArray *characterArray;
+
+@property (nonatomic,assign) CGFloat lastPtx;
+@property (nonatomic,assign) CGFloat curPtx;
+@property (nonatomic,assign) CGFloat curAngle;
 @end
 
 @implementation ARPeopleViewController
@@ -25,14 +29,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"AR人物";
-    
+    self.navigationController.navigationBarHidden = YES;
     [self setupScene];
     [self setupButtons];
     [self addGestureRecognizer];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
     [self startSession];
 }
 
@@ -48,35 +51,37 @@
     self.planes = [NSMutableDictionary new];
     self.characterArray = [NSMutableArray new];
     
-    self.arSceneView.showsStatistics = YES;
+    //    self.arSceneView.showsStatistics = YES;
     self.arSceneView.autoenablesDefaultLighting = YES;
-    self.arSceneView.debugOptions = ARSCNDebugOptionShowFeaturePoints;
+    //    self.arSceneView.debugOptions = ARSCNDebugOptionShowFeaturePoints;
     
     self.arSceneView.scene = [SCNScene new];
     [self.view addSubview:self.arSceneView];
 }
 
 - (void)setupButtons {
-    CGRect bounds = [UIScreen mainScreen].bounds;
-    UIButton *moveForward = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4-60, bounds.size.height - 100, 120, 100)];
-    [moveForward setTitle:@"前进" forState:UIControlStateNormal];
-    [moveForward addTarget:self action:@selector(runForwardAction) forControlEvents:UIControlEventTouchUpInside];
-//    [moveForward addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpOutside];
-//    [moveForward addTarget:self action:@selector(runForwardAction) forControlEvents:UIControlEventTouchDown];
+    //    CGRect bounds = [UIScreen mainScreen].bounds;
+    //    UIButton *moveForward = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4-60, bounds.size.height - 100, 120, 100)];
+    //    [moveForward setTitle:@"前进" forState:UIControlStateNormal];
+    //    [moveForward addTarget:self action:@selector(runForwardAction) forControlEvents:UIControlEventTouchUpInside];
+    //
+    //    UIButton *moveBack = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*3-60, bounds.size.height - 100, 120, 100)];
+    //    [moveBack setTitle:@"后退" forState:UIControlStateNormal];
+    //    [moveBack addTarget:self action:@selector(runBackAction) forControlEvents:UIControlEventTouchUpInside];
+    //
+    //    UIButton *stop = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*2-60, bounds.size.height - 100, 120, 100)];
+    //    [stop setTitle:@"停！" forState:UIControlStateNormal];
+    //    [stop addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpInside];
+    //
+    //    [self.arSceneView addSubview:moveForward];
+    //    [self.arSceneView addSubview:moveBack];
+    //    [self.arSceneView addSubview:stop];
     
-    UIButton *moveBack = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*3-60, bounds.size.height - 100, 120, 100)];
-    [moveBack setTitle:@"后退" forState:UIControlStateNormal];
-    [moveBack addTarget:self action:@selector(runBackAction) forControlEvents:UIControlEventTouchUpInside];
-//    [moveBack addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpOutside];
-//    [moveBack addTarget:self action:@selector(runBackAction) forControlEvents:UIControlEventTouchDown];
-    
-    UIButton *stop = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width/4*2-60, bounds.size.height - 100, 120, 100)];
-    [stop setTitle:@"停！" forState:UIControlStateNormal];
-    [stop addTarget:self action:@selector(stopRun) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.arSceneView addSubview:moveForward];
-    [self.arSceneView addSubview:moveBack];
-    [self.arSceneView addSubview:stop];
+    UIButton *back = [[UIButton alloc] initWithFrame:CGRectMake(10, 32, 70, 25)];
+    [back setTitle:@"🔙返回" forState:UIControlStateNormal];
+    back.titleLabel.textAlignment = NSTextAlignmentLeft;
+    [back addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
+    [self.arSceneView addSubview:back];
 }
 
 - (void)runForwardAction {
@@ -92,6 +97,10 @@
 - (void)stopRun {
     ARCharacterNode *node = [self.characterArray firstObject];
     [node stopRunAction];
+}
+
+- (void)goBack {
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 #pragma mark - Add Gesture Recognizer
@@ -122,16 +131,28 @@
 
 - (void)handleAddARSceneNodeFrom: (UITapGestureRecognizer *)tapGestureRecognizer {
     
-    CGPoint tapPoint = [tapGestureRecognizer locationInView:self.arSceneView];
-    NSArray<ARHitTestResult *> *result = [self.arSceneView hitTest:tapPoint types:ARHitTestResultTypeExistingPlaneUsingExtent];
-    
-    if (result.count == 0) {
-        return;
-    }
-    
     if (self.characterArray.count) {
         return;
     }
+    
+    CGPoint tapPoint = [tapGestureRecognizer locationInView:self.arSceneView];
+    NSArray<ARHitTestResult *> *result = [self.arSceneView hitTest:tapPoint types:ARHitTestResultTypeExistingPlaneUsingExtent];
+    
+    if (!self.selectedNode) {
+        self.selectedNode = [[ARCharacterNode alloc] init];
+    }
+    
+    if (result.count == 0) {
+        [self.selectedNode loadData];
+        self.selectedNode.scale = SCNVector3Make(0.009, 0.009, 0.009);
+        self.selectedNode.position = SCNVector3Make(0, -1, -2);
+        [self.characterArray addObject:self.selectedNode];
+        [self.arSceneView.scene.rootNode addChildNode:self.selectedNode];
+        
+        return;
+    }
+    
+    
     
     ARHitTestResult * hitResult = [result firstObject];
     [self insertGeometry:hitResult];
@@ -144,7 +165,7 @@
     }
     CGPoint holdPoint = [longPressGestureRecognizer locationInView:self.arSceneView];
     NSArray<SCNHitTestResult *> *result = [self.arSceneView hitTest:holdPoint
-                                                          options:@{SCNHitTestBoundingBoxOnlyKey: @YES, SCNHitTestFirstFoundOnlyKey: @YES}];
+                                                            options:@{SCNHitTestBoundingBoxOnlyKey: @YES, SCNHitTestFirstFoundOnlyKey: @YES}];
     if (result.count == 0) {
         return;
     }
@@ -157,6 +178,7 @@
 }
 
 -(void)handleMoveARSceneNodeFrom:(UIPanGestureRecognizer *)panGestureRecognizer {
+    CGPoint pt = [panGestureRecognizer locationInView:self.arSceneView];
     
     if (panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         CGPoint tapPoint = [panGestureRecognizer locationInView:self.arSceneView];
@@ -165,24 +187,25 @@
         if ([result count] == 0) {
             return;
         }
-        SCNHitTestResult *hitResult = [result firstObject];
-        if (![hitResult.node.parentNode isKindOfClass:[Plane class]]) {
-            self.selectedNode = [[hitResult node] parentNode];
-        }
+        
+        self.lastPtx = self.curPtx = pt.x;
     }
     if (panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
         if (self.selectedNode) {
-            CGPoint tapPoint = [panGestureRecognizer locationInView:self.arSceneView];
-            NSArray <ARHitTestResult *> *hitResults = [self.arSceneView hitTest:tapPoint types:ARHitTestResultTypeFeaturePoint];
-            ARHitTestResult *result = [hitResults lastObject];
+            self.curPtx = pt.x;
             
-            SCNMatrix4 matrix = SCNMatrix4FromMat4(result.worldTransform);
-            SCNVector3 vector = SCNVector3Make(matrix.m41, matrix.m42, matrix.m43);
-            [self.selectedNode setPosition:vector];
+            CGFloat offsetX = self.curPtx - self.lastPtx;
+            CGFloat angle = offsetX / [UIScreen mainScreen].bounds.size.width * M_PI;
+            
+            angle += self.curAngle;
+            NSLog(@"angle = %f",angle);
+            self.selectedNode.rotation = SCNVector4Make(0, 1, 0, angle);
         }
     }
     if (panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        self.selectedNode = nil;
+        if (self.selectedNode) {
+            self.curAngle = self.selectedNode.rotation.w;
+        }
     }
 }
 
@@ -198,9 +221,6 @@
                 return;
             }
         }
-        
-        SCNHitTestResult *hitResult = [result firstObject];
-        self.selectedNode = [[hitResult node] parentNode];
     }
     if (pinchGestureRecognizer.state == UIGestureRecognizerStateChanged) {
         if (self.selectedNode) {
@@ -208,27 +228,33 @@
             CGFloat pinchScaleY = pinchGestureRecognizer.scale * self.selectedNode.scale.y;
             CGFloat pinchScaleZ = pinchGestureRecognizer.scale * self.selectedNode.scale.z;
             [self.selectedNode setScale:SCNVector3Make(pinchScaleX, pinchScaleY, pinchScaleZ)];
+            
+            CGPoint tapPoint = [pinchGestureRecognizer locationInView:self.arSceneView];
+            NSArray <ARHitTestResult *> *hitResults = [self.arSceneView hitTest:tapPoint types:ARHitTestResultTypeFeaturePoint];
+            ARHitTestResult *result = [hitResults lastObject];
+            
+            SCNMatrix4 matrix = SCNMatrix4FromMat4(result.worldTransform);
+            SCNVector3 vector = SCNVector3Make(matrix.m41, matrix.m42, matrix.m43);
+            [self.selectedNode setPosition:vector];
         }
         pinchGestureRecognizer.scale = 1;
-    }
-    if (pinchGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        self.selectedNode = nil;
     }
 }
 
 #pragma mark - Additional Utils
 - (void)insertGeometry:(ARHitTestResult *)hitResult {
-    ARCharacterNode *node = [[ARCharacterNode alloc] init];
-    [node loadData];
-    node.scale = SCNVector3Make(0.009, 0.009, 0.009);
-    float insertionYOffset = 0.01;
-    node.position = SCNVector3Make(
-                                   hitResult.worldTransform.columns[3].x,
-                                   hitResult.worldTransform.columns[3].y + insertionYOffset,
-                                   hitResult.worldTransform.columns[3].z
-                                   );
-    [self.characterArray addObject:node];
-    [self.arSceneView.scene.rootNode addChildNode:node];
+    if (!self.selectedNode) {
+        self.selectedNode = [[ARCharacterNode alloc] init];
+    }
+    [self.selectedNode loadData];
+    self.selectedNode.scale = SCNVector3Make(0.009, 0.009, 0.009);
+    self.selectedNode.position = SCNVector3Make(
+                                                hitResult.worldTransform.columns[3].x,
+                                                hitResult.worldTransform.columns[3].y,
+                                                hitResult.worldTransform.columns[3].z
+                                                );
+    [self.characterArray addObject:self.selectedNode];
+    [self.arSceneView.scene.rootNode addChildNode:self.selectedNode];
 }
 
 #pragma mark - Configure ARSession
@@ -261,22 +287,22 @@
         return;
     }
     
-    Plane *plane = [[Plane alloc] initWithAnchor: (ARPlaneAnchor *)anchor];
-    [self.planes setObject:plane forKey:anchor.identifier];
-    [node addChildNode:plane];
+    //    Plane *plane = [[Plane alloc] initWithAnchor: (ARPlaneAnchor *)anchor];
+    //    [self.planes setObject:plane forKey:anchor.identifier];
+    //    [node addChildNode:plane];
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer didUpdateNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor {
-    Plane *plane = [self.planes objectForKey:anchor.identifier];
-    if (plane == nil) {
-        return;
-    }
-    [plane update:(ARPlaneAnchor *)anchor];
+    //    Plane *plane = [self.planes objectForKey:anchor.identifier];
+    //    if (plane == nil) {
+    //        return;
+    //    }
+    //    [plane update:(ARPlaneAnchor *)anchor];
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer didRemoveNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor {
     
-    [self.planes removeObjectForKey:anchor.identifier];
+    //    [self.planes removeObjectForKey:anchor.identifier];
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer willUpdateNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor {
@@ -300,3 +326,4 @@
 }
 
 @end
+
